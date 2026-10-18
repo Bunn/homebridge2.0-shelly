@@ -186,10 +186,15 @@ module.exports = homebridge => {
           newValue
         )
 
+        // store the target before sending the request, since the device
+        // can report that it has started moving before the request returns
+        const previousTargetPosition = this._targetPosition
+        this._targetPosition = newValue
+
         try {
           await this._setPosition(newValue)
-          this._targetPosition = newValue
         } catch (e) {
+          this._targetPosition = previousTargetPosition
           handleFailedRequest(
             this.log,
             d,
