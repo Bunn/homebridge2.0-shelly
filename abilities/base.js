@@ -270,13 +270,15 @@ module.exports = homebridge => {
       const position = this.position
       let targetPosition = null
 
+      // devices report the requested position as soon as they start moving,
+      // so only assume an unknown target when the roller has moved past it
       if (state === 'stop') {
         targetPosition = position
-      } else if (state === 'open' && this.targetPosition <= position) {
+      } else if (state === 'open' && this.targetPosition < position) {
         // we don't know what the target position is here, but we set it
         // to 100 so that the interface shows that the roller is opening
         targetPosition = 100
-      } else if (state === 'close' && this.targetPosition >= position) {
+      } else if (state === 'close' && this.targetPosition > position) {
         // we don't know what the target position is here, but we set it
         // to 0 so that the interface shows that the roller is closing
         targetPosition = 0
