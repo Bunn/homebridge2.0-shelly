@@ -164,8 +164,14 @@ module.exports = homebridge => {
 
       callback()
 
-      if (this.targetPosition === newValue ||
-          this._setPositionTimeout !== null) {
+      // debounce: HomeKit sends a burst of values while the slider is being
+      // dragged, so restart the timer and only send the latest one
+      if (this._setPositionTimeout !== null) {
+        clearTimeout(this._setPositionTimeout)
+        this._setPositionTimeout = null
+      }
+
+      if (this.targetPosition === newValue) {
         return
       }
 
